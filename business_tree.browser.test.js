@@ -1,8 +1,10 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
-const {createFixture}=require('../Yaqintop/backend/admin_operations.test');
-const {createBranchSystem,registerBranchRoutes}=require('../Yaqintop/backend/branch_system');
+const fs=require('node:fs'),path=require('node:path');
+const backendRoot=path.resolve(__dirname,'..',fs.existsSync(path.resolve(__dirname,'../Izbor/backend'))?'Izbor':'Yaqintop','backend');
+const {createFixture}=require(path.join(backendRoot,'admin_operations.test'));
+const {createBranchSystem,registerBranchRoutes}=require(path.join(backendRoot,'branch_system'));
 test('Admin business tree on actual PostgreSQL routes has one payer and four expandable branches',{timeout:90000},async t=>{
   const f=await createFixture();t.after(()=>f.close());
   await f.pool.query("UPDATE shops SET store_code='MP-EIDNS3',ai_plan_credits_remaining=500,ai_bonus_credits_remaining=0,ai_purchased_credits_remaining=0,ai_credits_remaining=500 WHERE id=1");

@@ -201,8 +201,8 @@
     if (page === 'stores') bindStores();
     if (page === 'dashboard') await summary();
     if (page === 'audit') await auditLog();
-    if (page === 'compliance') await window.YaqintopCompliance.refresh();
-    if (page === 'pos') await window.YaqintopPos.refresh();
+    if (page === 'compliance') await window.IzborCompliance.refresh();
+    if (page === 'pos') await window.IzborPos.refresh();
     if (page === 'operations') await operations();
     if (page === 'taxonomy') await loadTaxonomy();
     if (page === 'subscriptions') {
@@ -217,7 +217,7 @@
     for (const id of ['partnershipRows','supportInbox','supportConversation','supportCounters','controlUsers','controlSummary','auditRows','operationsData','taxonomyData']) $(id).replaceChildren();
     dialog.close();
   };
-  window.YaqintopControl = { navigate, storeDetail, userDetail, branchDetail, clearPrivateState };
+  window.IzborControl = { navigate, storeDetail, userDetail, branchDetail, clearPrivateState };
   $('partnershipReload').onclick=handle(partnerships);$('partnershipStatus').onchange=handle(partnerships);
   for (const id of ['apiUrl','adminKey']) $(id).addEventListener('input', clearPrivateState);
   function bindReports() {

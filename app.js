@@ -19,7 +19,7 @@ let dashboardLoading = false;
 let grantShopId = null;
 let adminSession = null;
 
-const configuredApiBase = String(window.MAPMARKET_CONFIG?.PUBLIC_API_BASE_URL || '').trim().replace(/\/$/, '');
+const configuredApiBase = String(window.IZBOR_CONFIG?.PUBLIC_API_BASE_URL || window.MAPMARKET_CONFIG?.PUBLIC_API_BASE_URL || '').trim().replace(/\/$/, '');
 const ADMIN_API_TIMEOUT_MS = 15_000;
 const labels = { FREE: 'FREE', PRO: 'PRO', BUSINESS: 'BUSINESS', BUSINESS_PLUS: 'BUSINESS PLUS' };
 const money = (value) => `${Number(value || 0).toLocaleString('ru-RU')} сум`;
@@ -330,7 +330,7 @@ function renderShops(rows) {
   document.querySelectorAll('[data-grant-plan]').forEach((button) => {
     button.onclick = () => openFreeSubscriptionDialog(button.dataset.grantPlan);
   });
-  document.querySelectorAll('[data-business-branch]').forEach(button=>button.onclick=async()=>{try{await window.YaqintopControl.branchDetail(button.dataset.businessBranch);}catch(error){setError(error.message);}});
+  document.querySelectorAll('[data-business-branch]').forEach(button=>button.onclick=async()=>{try{await window.IzborControl.branchDetail(button.dataset.businessBranch);}catch(error){setError(error.message);}});
 }
 
 function renderReviews() {

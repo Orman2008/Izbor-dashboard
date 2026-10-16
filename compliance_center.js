@@ -16,8 +16,8 @@
   $('compliancePolicy').innerHTML=p.categories.map(c=>`<p>${esc(c.category_code)}: ${c.required_license?'требуется':'не требуется'} · ${esc(c.license_type)}</p>`).join('')||'<p>Утверждённая policy ещё не задана. Обычные категории не требуют лицензии.</p>';
   await audit();
  }
- window.YaqintopCompliance={refresh};
- link.onclick=run(()=>window.YaqintopControl.navigate('compliance'));$('complianceReload').onclick=run(refresh);$('complianceAuditFilters').onsubmit=run(audit);
+ window.IzborCompliance={refresh};
+ link.onclick=run(()=>window.IzborControl.navigate('compliance'));$('complianceReload').onclick=run(refresh);$('complianceAuditFilters').onsubmit=run(audit);
  panel.addEventListener('click',run(async event=>{const button=event.target.closest('[data-compliance-decision]');if(!button)return;const [kind,id,statusValue]=button.dataset.complianceDecision.split(':');const reason=statusValue==='rejected'?window.prompt('Обязательная причина отказа:'):'';if(statusValue==='rejected'&&(!reason||reason.trim().length<3))throw Error('Укажите причину отказа.');button.disabled=true;try{await api(kind==='seller'?`/admin/compliance/sellers/${id}/decision`:`/admin/compliance/shops/${id}/license-decision`,{method:'POST',body:JSON.stringify(kind==='seller'?{verification_status:statusValue,rejection_reason:reason}:{license_verified:statusValue==='verified',reason})});await refresh();}finally{button.disabled=false;}}));
  $('compliancePolicyForm').onsubmit=run(async()=>{const body=formBody('compliancePolicyForm');body.required_license=$('compliancePolicyForm').elements.required_license.checked;await api('/admin/compliance/license-requirements/'+encodeURIComponent(body.category),{method:'PUT',body:JSON.stringify(body)});await refresh();});
  $('compliancePublish').onsubmit=run(async()=>{const form=$('compliancePublish');if(!form.reportValidity())return;const body=formBody('compliancePublish');body.approved=form.elements.approved.checked;if(!window.confirm('Опубликовать эту версию и запросить новое явное согласие пользователей?'))return;await api('/admin/compliance/legal/documents',{method:'POST',body:JSON.stringify(body)});form.reset();await refresh();});
