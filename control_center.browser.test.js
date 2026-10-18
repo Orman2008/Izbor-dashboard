@@ -54,7 +54,7 @@ test('control center browser regression: navigation, private support, actions, X
     if (u.pathname === '/admin/support/7/reply') { failed = true; data = { queued: true }; }
     if (u.pathname === '/admin/support/7/retry/99') { failed = false; data = { queued: true }; }
     if (u.pathname === '/admin/support/7/close') { status = 'RESOLVED'; data = { ok: true }; }
-    if (u.pathname === '/admin/support/7') data = { ticket: { id: 7, status, display_name: 'Fixture', user_type: 'buyer' }, shops: [shop], messages: [{ id: 3, sender_type: 'USER', text: '<script>window.injected=true</script>', media_storage_key: 'support/3.png' }, ...(failed ? [{ id: 99, sender_type: 'ADMIN', text: 'Retained reply', delivery_status: 'FAILED', delivery_error: 'TELEGRAM_403' }] : [])] };
+    if (u.pathname === '/admin/support/7') data = { ticket: { id: 7, status, display_name: 'Fixture', user_type: 'buyer' }, shops: [shop], messages: [{ id: 3, sender_type: 'USER', text: '<script>window.injected=true</script>', message_type: 'image' }, ...(failed ? [{ id: 99, sender_type: 'ADMIN', text: 'Retained reply', delivery_status: 'FAILED', delivery_error: 'TELEGRAM_403' }] : [])] };
     if (u.pathname === '/admin/support/media/3') return route.fulfill({ status: 200, contentType: 'image/png', body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aY9sAAAAASUVORK5CYII=', 'base64') });
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(data) });
   });
@@ -63,7 +63,8 @@ test('control center browser regression: navigation, private support, actions, X
   await page.locator('#adminKey').fill('fixture-admin-key'); await page.locator('#load').click();
   await page.locator('[data-page-button="support"]').click(); await page.locator('[data-ticket="7"]').click();
   await page.locator('[data-support-image="3"]').waitFor();
-  await page.waitForFunction(() => document.querySelector('[data-support-image="3"]').src.startsWith('blob:'));
+  await page.waitForFunction(() => { const image = document.querySelector('[data-support-image="3"]'); return image.src.startsWith('blob:') && image.complete && image.naturalWidth > 0; });
+  assert.equal(await page.locator('[data-support-image="3"]').getAttribute('alt'), 'Фото пользователя');
   assert.equal(await page.evaluate(() => window.injected), undefined);
   await page.locator('#supportReply').fill('Ответ администратора'); await page.locator('#supportSend').click();
   await page.locator('[data-retry="99"]').waitFor(); assert.match(await page.locator('#supportConversation').innerText(), /TELEGRAM_403/);
